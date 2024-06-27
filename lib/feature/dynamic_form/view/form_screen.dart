@@ -45,8 +45,22 @@ class _FormScreenState extends State<FormScreen> {
                             padding: const EdgeInsets.only(top: 18.0),
                             child: OutlinedButton(
                                 onPressed: () async {
-                                  logic.formKey.currentState?.validate();
-                                  await logic.saveData();
+                                  if (logic.validateFields()) {
+                                    await logic.saveData();
+                                    logic.reset();
+                                  }
+                                  // if ((logic.formKey.currentState?.validate() ??
+                                  //         false) &&
+                                  //     logic.validateFields()) {
+                                  //   // await logic.saveData();
+                                  //   print(
+                                  //       "             // ;             // await logic.saveData();");
+                                  // }
+
+                                  // Workmanager().initialize(
+                                  //   logic.onBackgroundTask,
+                                  //   isInDebugMode: true,
+                                  // );
                                 },
                                 child: const Text("SUBMIT")),
                           )

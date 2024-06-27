@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:developer';
-import 'dart:io';
 
 import 'package:aws_s3_polar/utility/dialog_service/dialog_service.dart';
 import 'package:http/http.dart' as http;
@@ -22,21 +21,8 @@ class ApiService {
 
   static Future<bool> saveData(
       {required String url, Object? body, bool showLoader = false}) async {
-    // showLoader ? DialogService().showLoader() : null;
-    print(body.toString());
+    showLoader ? DialogService().showLoader() : null;
 
-    body = {
-      "data": [
-        {
-          "Consumer Number": "12345",
-          "Service Options": ["Option 1", "Option 3"],
-          "Satisfaction Level": "Satisfied",
-          "Preferred Contact Method": "Email",
-          "Profile Picture": "path/to/profile_picture.jpg"
-        }
-      ]
-    };
-    // return false;
     try {
       final response = await http.post(Uri.parse(url), body: json.encode(body));
       if (response.statusCode == 200) {
@@ -47,7 +33,7 @@ class ApiService {
     } catch (e) {
       log("Failed - $url -  error - $e");
     } finally {
-      // showLoader ? DialogService().showLoader() : null;
+      showLoader ? DialogService().closeLoader() : null;
     }
     return true;
   }

@@ -49,7 +49,7 @@ app.*.map.json
 
 #key
 android/key.properties
-
+security/
 #amplify-do-not-edit-begin
 amplify/\#current-cloud-backend
 amplify/.config/local-*

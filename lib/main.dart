@@ -1,37 +1,52 @@
+import 'dart:async';
 import 'package:aws_s3_polar/feature/dynamic_form/view/form_screen.dart';
+import 'package:aws_s3_polar/network/controller/network_controller.dart';
+import 'package:aws_s3_polar/utility/background_service/background_service.dart';
 import 'package:aws_s3_polar/utility/local_storage/local_storage.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:get/get_navigation/src/root/get_material_app.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  //  FlutterBackgroundService.initialize(onStart);
   await LocalStorage.init();
-  // await Workmanager().initialize(
-  //   onBackgroundTask,
-  //   // isInDebugMode: true, // Callback function for the task
-  //   // Optional data to pass to the task
-  // );
-  // await Handler.initializeController();
   runApp(const MyApp());
 }
 
-onBackgroundTask() async {
-  // final connectivityResult = await Connectivity().checkConnectivity();
-  // if (connectivityResult.contains(ConnectivityResult.mobile) ||
-  //     connectivityResult.contains(ConnectivityResult.wifi)) {
-  //   String pending = await LocalStorage.getGramPowerAnswer();
-  //   if (pending.isNotEmpty) {
-  //     await GramPowerRepo.saveGramPowerData(null);
-  //   }
-  // } else {}
+class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+  @override
+  State<MyApp> createState() => _MyAppState();
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+  late StreamSubscription<List<ConnectivityResult>> subscription;
+  late NetworkController controller;
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.put(NetworkController());
+    WidgetsBinding.instance.addObserver(this);
+    subscription = Connectivity()
+        .onConnectivityChanged
+        .listen((List<ConnectivityResult> result) {
+      controller.changeConnectivityStatus(result);
+    });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    subscription.cancel();
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    BackgroundService().handle(state);
+  }
 
   @override
   Widget build(BuildContext context) {

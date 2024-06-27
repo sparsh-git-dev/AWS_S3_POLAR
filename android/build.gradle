@@ -1,4 +1,22 @@
+buildscript {
+    ext.kotlin_version = '1.9.20'
+    repositories {
+        google()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:7.4.2'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
 allprojects {
+        tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+        kotlinOptions {
+            jvmTarget = "1.8"
+        }
+    }
     repositories {
         google()
         mavenCentral()
@@ -8,11 +26,15 @@ allprojects {
 rootProject.buildDir = '../build'
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
-}
-subprojects {
     project.evaluationDependsOn(':app')
 }
 
+
 tasks.register("clean", Delete) {
     delete rootProject.buildDir
+}
+configurations.all {
+    resolutionStrategy {
+        force 'androidx.core:core-ktx:1.6.0'
+    }
 }

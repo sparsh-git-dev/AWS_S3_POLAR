@@ -51,6 +51,10 @@ class Field {
         "meta_info": metaInfo.toJson(),
         "component_type": componentType,
       };
+  Map<String, dynamic> toPostPayload() => {
+        ...toJson(),
+        "answer": answers?.isNotEmpty ?? false ? answers!.join(", ") : answer
+      };
 }
 
 class MetaInfo {
