@@ -5,8 +5,8 @@ import 'package:polaris/utility/dialog_service/dialog_service.dart';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  static const cloudName = "dnhopswdo";
-  static const unsigned = "'mxip6anx'";
+  static const cloudName = "";
+  static const unsigned = "";
 
   /// This Dart function fetches data from a given URL using HTTP GET request and returns the response
   /// body if the status code is 200, otherwise logs or throws an exception.
