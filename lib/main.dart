@@ -2,15 +2,16 @@ import 'dart:async';
 import 'package:aws_s3_polar/feature/dynamic_form/view/form_screen.dart';
 import 'package:aws_s3_polar/network/controller/network_controller.dart';
 import 'package:aws_s3_polar/utility/background_service/background_service.dart';
-import 'package:aws_s3_polar/utility/local_storage/local_storage.dart';
+import 'package:cloudinary_flutter/cloudinary_object.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await LocalStorage.init();
+  await GetStorage.init();
   runApp(const MyApp());
 }
 
@@ -21,6 +22,8 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+  CloudinaryObject cloudinaryObject =
+      CloudinaryObject.fromCloudName(cloudName: "dnhopswdo");
   late StreamSubscription<List<ConnectivityResult>> subscription;
   late NetworkController controller;
   @override

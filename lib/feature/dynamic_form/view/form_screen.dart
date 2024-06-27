@@ -49,18 +49,6 @@ class _FormScreenState extends State<FormScreen> {
                                     await logic.saveData();
                                     logic.reset();
                                   }
-                                  // if ((logic.formKey.currentState?.validate() ??
-                                  //         false) &&
-                                  //     logic.validateFields()) {
-                                  //   // await logic.saveData();
-                                  //   print(
-                                  //       "             // ;             // await logic.saveData();");
-                                  // }
-
-                                  // Workmanager().initialize(
-                                  //   logic.onBackgroundTask,
-                                  //   isInDebugMode: true,
-                                  // );
                                 },
                                 child: const Text("SUBMIT")),
                           )

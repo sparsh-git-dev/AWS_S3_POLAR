@@ -51,8 +51,12 @@ class Field {
         "meta_info": metaInfo.toJson(),
         "component_type": componentType,
       };
+
+  /// The function `toPostPayload` creates a map with key-value pairs from a JSON object and includes an
+  /// "answer" field with a comma-separated list of answers if available.
   Map<String, dynamic> toPostPayload() => {
         ...toJson(),
+        // answers for Checkbox , storing them as String
         "answer": answers?.isNotEmpty ?? false ? answers!.join(", ") : answer
       };
 }

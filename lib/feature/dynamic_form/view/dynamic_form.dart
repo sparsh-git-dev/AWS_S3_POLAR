@@ -1,11 +1,11 @@
 import 'package:aws_s3_polar/feature/dynamic_form/controller/form_screen_controller.dart';
-import 'package:aws_s3_polar/network/aws/aws_service.dart';
 import 'package:aws_s3_polar/utility/handler/handler.dart';
 import 'package:aws_s3_polar/utility/permision/permission.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../model/gram_power_model.dart';
 
@@ -39,7 +39,7 @@ class DynamicForm extends StatelessWidget {
                               fontSize: 18, fontWeight: FontWeight.w500),
                         ),
                         if (field.answer.isEmpty &&
-                            logic.isValidate &&
+                            logic.isValidateFields &&
                             field.metaInfo.mandatory == 'yes')
                           const Text(
                             "Required",
@@ -74,7 +74,7 @@ class DynamicForm extends StatelessWidget {
                                   ? TextInputType.number
                                   : TextInputType.text,
                           validator: field.metaInfo.mandatory == 'yes' &&
-                                  logic.isValidate
+                                  logic.isValidateFields
                               ? (value) => value!.isEmpty ? 'Required' : null
                               : null,
                         ),
@@ -96,7 +96,7 @@ class DynamicForm extends StatelessWidget {
                               fontSize: 18, fontWeight: FontWeight.w500),
                         ),
                         if ((field.answers?.isEmpty ?? true) &&
-                            logic.isValidate &&
+                            logic.isValidateFields &&
                             field.metaInfo.mandatory == 'yes')
                           const Text(
                             "Required",
@@ -136,7 +136,7 @@ class DynamicForm extends StatelessWidget {
                               fontSize: 18, fontWeight: FontWeight.w500),
                         ),
                         if (field.answer.isEmpty &&
-                            logic.isValidate &&
+                            logic.isValidateFields &&
                             field.metaInfo.mandatory == 'yes')
                           const Text(
                             "Required",
@@ -174,7 +174,7 @@ class DynamicForm extends StatelessWidget {
                               fontSize: 18, fontWeight: FontWeight.w500),
                         ),
                         if (field.answer.isEmpty &&
-                            logic.isValidate &&
+                            logic.isValidateFields &&
                             field.metaInfo.mandatory == 'yes')
                           const Text(
                             "Required",
@@ -194,7 +194,7 @@ class DynamicForm extends StatelessWidget {
                             ),
                           ),
                           validator: field.metaInfo.mandatory == 'yes' &&
-                                  logic.isValidate
+                                  logic.isValidateFields
                               ? (value) =>
                                   value?.isEmpty ?? true ? 'Required' : null
                               : null,
@@ -230,7 +230,7 @@ class DynamicForm extends StatelessWidget {
                               fontSize: 18, fontWeight: FontWeight.w500),
                         ),
                         if (field.answer.isEmpty &&
-                            logic.isValidate &&
+                            logic.isValidateFields &&
                             field.metaInfo.mandatory == 'yes')
                           const Text(
                             "Required",
@@ -247,7 +247,6 @@ class DynamicForm extends StatelessWidget {
                               final ImagePicker picker = ImagePicker();
                               final XFile? photo = await picker.pickImage(
                                   source: ImageSource.camera);
-                              logic.myfile = photo;
 
                               bool storagePermission =
                                   await AppPermission.getStoragePermission(
@@ -255,7 +254,7 @@ class DynamicForm extends StatelessWidget {
 
                               if (photo != null && storagePermission) {
                                 String filePath =
-                                    await Handler.savePictureToFolder(
+                                    await ImageHandler.savePictureToFolder(
                                         photo,
                                         field.metaInfo.savingFolder ??
                                             "POLARIS");
@@ -266,10 +265,9 @@ class DynamicForm extends StatelessWidget {
                                     .showSnackBar(SnackBar(
                                   content: Text('Image saved to $filePath'),
                                 ));
-                                // AWSS3Service.uploadToS3(
-                                //   fileAsBinary: photo,
-                                //   filename: photo.name,
-                                // );
+                                field.answer =
+                                    await logic.uploadImage(filePath) ??
+                                        filePath;
                               }
                             },
                             child: Text(field.metaInfo.label),
@@ -277,14 +275,29 @@ class DynamicForm extends StatelessWidget {
                         ),
                         if (field.answer.isNotEmpty)
                           Container(
-                              margin: const EdgeInsets.symmetric(vertical: 10),
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 8),
-                              decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey),
-                                borderRadius: BorderRadius.circular(10.0),
+                            margin: const EdgeInsets.symmetric(vertical: 10),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 8),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey),
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            child: InkWell(
+                              onTap: field.answer.contains("cloudinary")
+                                  ? () => launchUrl(Uri.parse(field.answer))
+                                  : null,
+                              child: Text(
+                                field.answer.split("/").last,
+                                style: field.answer.contains("cloudinary")
+                                    ? const TextStyle(
+                                        color: Colors.blue,
+                                        overflow: TextOverflow.ellipsis,
+                                        decoration: TextDecoration.underline,
+                                      )
+                                    : null,
                               ),
-                              child: Text(field.answer))
+                            ),
+                          ),
                       ],
                     );
                   });
