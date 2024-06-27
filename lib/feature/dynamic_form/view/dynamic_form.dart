@@ -1,6 +1,6 @@
-import 'package:aws_s3_polar/feature/dynamic_form/controller/form_screen_controller.dart';
-import 'package:aws_s3_polar/utility/handler/handler.dart';
-import 'package:aws_s3_polar/utility/permision/permission.dart';
+import 'package:polaris/feature/dynamic_form/controller/form_screen_controller.dart';
+import 'package:polaris/utility/handler/handler.dart';
+import 'package:polaris/utility/permision/permission.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';

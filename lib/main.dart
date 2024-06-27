@@ -1,13 +1,14 @@
 import 'dart:async';
-import 'package:aws_s3_polar/feature/dynamic_form/view/form_screen.dart';
-import 'package:aws_s3_polar/network/controller/network_controller.dart';
-import 'package:aws_s3_polar/utility/background_service/background_service.dart';
+import 'package:polaris/feature/dynamic_form/view/form_screen.dart';
+import 'package:polaris/network/controller/network_controller.dart';
+
 import 'package:cloudinary_flutter/cloudinary_object.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:polaris/utility/background_service/background_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

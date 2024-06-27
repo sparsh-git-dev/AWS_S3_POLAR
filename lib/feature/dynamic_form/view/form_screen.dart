@@ -1,6 +1,6 @@
-import 'package:aws_s3_polar/feature/dynamic_form/controller/form_screen_controller.dart';
-import 'package:aws_s3_polar/feature/dynamic_form/view/dynamic_form.dart';
-import 'package:aws_s3_polar/global/widget/loader.dart';
+import 'package:polaris/feature/dynamic_form/controller/form_screen_controller.dart';
+import 'package:polaris/feature/dynamic_form/view/dynamic_form.dart';
+import 'package:polaris/global/widget/loader.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

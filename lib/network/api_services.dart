@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
-import 'package:aws_s3_polar/utility/dialog_service/dialog_service.dart';
+import 'package:polaris/utility/dialog_service/dialog_service.dart';
 import 'package:http/http.dart' as http;
 
 class ApiService {

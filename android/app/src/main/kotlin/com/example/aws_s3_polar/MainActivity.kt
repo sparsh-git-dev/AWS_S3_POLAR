@@ -1,4 +1,4 @@
-package com.example.aws_s3_polar
+package com.example.polaris
 
 import io.flutter.embedding.android.FlutterActivity
 

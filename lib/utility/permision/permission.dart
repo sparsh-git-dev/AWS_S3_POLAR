@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:aws_s3_polar/utility/dialog_service/dialog_service.dart';
+import 'package:polaris/utility/dialog_service/dialog_service.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 

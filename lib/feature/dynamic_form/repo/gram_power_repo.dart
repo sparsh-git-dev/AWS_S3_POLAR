@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'dart:developer';
 
-import 'package:aws_s3_polar/feature/dynamic_form/model/gram_power_model.dart';
-import 'package:aws_s3_polar/network/api_services.dart';
-import 'package:aws_s3_polar/network/controller/network_controller.dart';
-import 'package:aws_s3_polar/utility/local_storage/local_storage.dart';
+import 'package:polaris/feature/dynamic_form/model/gram_power_model.dart';
+import 'package:polaris/network/api_services.dart';
+import 'package:polaris/network/controller/network_controller.dart';
+import 'package:polaris/utility/local_storage/local_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
