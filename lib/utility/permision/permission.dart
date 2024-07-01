@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:polaris/utility/dialog_service/dialog_service.dart';
@@ -20,12 +21,12 @@ class AppPermission {
   }
 
   static Future<bool> getStoragePermission(context) async {
+    bool permissionGranted = false;
     try {
-      bool permissionGranted = false;
-
       DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
       AndroidDeviceInfo? androidInfo =
           Platform.isAndroid ? await deviceInfo.androidInfo : null;
+
       if (androidInfo != null && androidInfo.version.sdkInt >= 33) {
         permissionGranted = await Permission.photos.request().isGranted;
         // await Permission.manageExternalStorage.request().isGranted;
@@ -33,28 +34,34 @@ class AppPermission {
         var permission = await Permission.storage.request();
         permissionGranted = permission.isGranted;
 
-        if (permission.isGranted) {
-          permissionGranted = true;
+        if (permissionGranted) {
+          return true;
         } else if (permission.isPermanentlyDenied) {
-          DialogService()
-              .confirmAlertDialogWithoutTitle(
-                  "Storage Permission",
-                  "You have permanently denied storage permission to this app. Do you want to enable storage access from mobile settings?",
-                  "No",
-                  "Yes")
-              .then((action) async {
-            if (action == true) {
-              await openAppSettings();
-              permission = await Permission.storage.request();
-            }
-          });
+          permissionGranted = await _requestStoragePermissionFromSettings();
         } else if (permission.isDenied) {
           permissionGranted = false;
         }
       }
-      return permissionGranted;
-    } on Exception {
-      rethrow;
+    } catch (e) {
+      log(e.toString());
+    }
+    return permissionGranted;
+  }
+
+  static Future<bool> _requestStoragePermissionFromSettings() async {
+    final bool input = await DialogService().confirmAlertDialogWithoutTitle(
+        "Storage Permission",
+        "You have permanently denied storage permission to this app. Do you want to enable storage access from mobile settings?",
+        "No",
+        "Yes");
+    if (input) {
+      Future.delayed(const Duration(seconds: 1), () async {
+        await openAppSettings();
+      });
+
+      return await Permission.storage.request().isGranted;
+    } else {
+      return false;
     }
   }
 
