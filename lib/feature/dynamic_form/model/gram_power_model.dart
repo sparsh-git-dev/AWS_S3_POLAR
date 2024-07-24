@@ -1,6 +1,8 @@
 import 'dart:convert';
 
-class GramPowerModel {
+import '../../../polaris/model/polaris_app_model.dart';
+
+final class GramPowerModel extends PolarisAppModel {
   String formName;
   List<Field> fields;
 
@@ -12,17 +14,33 @@ class GramPowerModel {
   factory GramPowerModel.fromRawJson(String str) =>
       GramPowerModel.fromJson(json.decode(str));
 
+  @override
   String toRawJson() => json.encode(toJson());
 
-  factory GramPowerModel.fromJson(Map<String, dynamic> json) => GramPowerModel(
+  static T fromJson<T>(Map<String, dynamic> json) =>
+      GramPowerModel._fromJson(json) as T;
+
+  factory GramPowerModel._fromJson(Map<String, dynamic> json) => GramPowerModel(
         formName: json["form_name"],
         fields: List<Field>.from(json["fields"].map((x) => Field.fromJson(x))),
       );
 
+  @override
   Map<String, dynamic> toJson() => {
         "form_name": formName,
         "fields": List<dynamic>.from(fields.map((x) => x.toJson())),
       };
+
+  @override
+  GramPowerModel copyWith({
+    String? formName,
+    List<Field>? fields,
+  }) {
+    return GramPowerModel(
+      formName: formName ?? this.formName,
+      fields: fields ?? this.fields,
+    );
+  }
 }
 
 class Field {

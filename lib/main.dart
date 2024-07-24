@@ -10,6 +10,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:polaris/utility/background_service/background_service.dart';
 
+/// The below function initializes the Flutter application and runs the MyApp widget.
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
@@ -27,6 +28,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       CloudinaryObject.fromCloudName(cloudName: "dnhopswdo");
   late StreamSubscription<List<ConnectivityResult>> subscription;
   late NetworkController controller;
+
+  /// The `initState` function in Dart initializes a network controller and listens for changes in
+  /// connectivity status.
   @override
   void initState() {
     super.initState();
@@ -39,6 +43,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     });
   }
 
+  /// The dispose function removes an observer and cancels a subscription before calling the superclass's
+  /// dispose method.
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
@@ -46,6 +52,14 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     super.dispose();
   }
 
+  /// The function `didChangeAppLifecycleState` in Dart is used to handle changes in the app's lifecycle
+  /// state by calling the `handle` method of the `BackgroundService` class.
+  ///
+  /// Args:
+  ///   state (AppLifecycleState): The `state` parameter in the `didChangeAppLifecycleState` method
+  /// represents the current lifecycle state of the application. It is of type `AppLifecycleState`, which
+  /// is an enum that defines the possible states of an application's lifecycle, such as `resumed`,
+  /// `inactive`, `paused`,
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
