@@ -1,11 +1,11 @@
 import 'package:polaris/feature/dynamic_form/controller/form_screen_controller.dart';
+import 'package:polaris/feature/dynamic_form/view/widgets/image_with_dialog.dart';
 import 'package:polaris/utility/handler/handler.dart';
 import 'package:polaris/utility/permision/permission.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../model/gram_power_model.dart';
 
@@ -25,62 +25,63 @@ class DynamicForm extends StatelessWidget {
           final Field field = logic.model!.fields[index];
           switch (field.componentType) {
             case 'EditText':
-              return GetBuilder<FormScreenController>(
-                  id: field.metaInfo.label,
-                  builder: (context) {
-                    return Column(
-                      key: ValueKey(index),
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          field.metaInfo.label +
-                              (field.metaInfo.mandatory == 'yes' ? " *" : ""),
-                          style: const TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w500),
-                        ),
+              return Column(
+                key: ValueKey(index),
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    field.metaInfo.label +
+                        (field.metaInfo.mandatory == 'yes' ? " *" : ""),
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.w500),
+                  ),
+                  GetBuilder<FormScreenController>(
+                      id: field.metaInfo.label,
+                      builder: (logic) {
                         if (field.answer.isEmpty &&
                             logic.isValidateFields &&
-                            field.metaInfo.mandatory == 'yes')
-                          const Text(
+                            field.metaInfo.mandatory == 'yes') {
+                          return const Text(
                             "Required",
                             style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w400,
                                 color: Colors.red),
-                          ),
-                        const SizedBox(height: 8),
-                        TextFormField(
-                          controller: TextEditingController(text: field.answer),
-                          onChanged: (String value) {
-                            field.answer = value;
-                            logic.update([field.metaInfo.label]);
-                          },
-                          inputFormatters:
-                              field.metaInfo.componentInputType == 'INTEGER'
-                                  ? [
-                                      FilteringTextInputFormatter.digitsOnly,
-                                    ]
-                                  : null,
-                          decoration: InputDecoration(
-                            label: null,
-                            border: OutlineInputBorder(
-                              borderSide:
-                                  const BorderSide(color: Colors.transparent),
-                              borderRadius: BorderRadius.circular(12.0),
-                            ),
-                          ),
-                          keyboardType:
-                              field.metaInfo.componentInputType == 'INTEGER'
-                                  ? TextInputType.number
-                                  : TextInputType.text,
-                          validator: field.metaInfo.mandatory == 'yes' &&
-                                  logic.isValidateFields
-                              ? (value) => value!.isEmpty ? 'Required' : null
-                              : null,
-                        ),
-                      ],
-                    );
-                  });
+                          );
+                        }
+                        return Container();
+                      }),
+                  const SizedBox(height: 8),
+                  TextFormField(
+                    controller: TextEditingController(text: field.answer),
+                    onChanged: (String value) {
+                      field.answer = value;
+                      logic.update([field.metaInfo.label]);
+                    },
+                    inputFormatters:
+                        field.metaInfo.componentInputType == 'INTEGER'
+                            ? [
+                                FilteringTextInputFormatter.digitsOnly,
+                              ]
+                            : null,
+                    decoration: InputDecoration(
+                      label: null,
+                      border: OutlineInputBorder(
+                        borderSide: const BorderSide(color: Colors.transparent),
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                    ),
+                    keyboardType: field.metaInfo.componentInputType == 'INTEGER'
+                        ? TextInputType.number
+                        : TextInputType.text,
+                    validator: field.metaInfo.mandatory == 'yes' &&
+                            logic.isValidateFields
+                        ? (value) => value!.isEmpty ? 'Required' : null
+                        : null,
+                  ),
+                ],
+              );
+
             case 'CheckBoxes':
               return GetBuilder<FormScreenController>(
                   key: ValueKey(index),
@@ -185,6 +186,7 @@ class DynamicForm extends StatelessWidget {
                           ),
                         const SizedBox(height: 8),
                         DropdownButtonFormField<String>(
+                          value: field.answer.isEmpty ? null : field.answer,
                           hint: const Text("--SELECT--"),
                           decoration: InputDecoration(
                             border: OutlineInputBorder(
@@ -198,15 +200,11 @@ class DynamicForm extends StatelessWidget {
                               ? (value) =>
                                   value?.isEmpty ?? true ? 'Required' : null
                               : null,
-                          items: field.metaInfo.options!
+                          items: List.from(field.metaInfo.options!
                               .map((option) => DropdownMenuItem(
                                     value: option,
-                                    child: Text(option +
-                                        (field.metaInfo.mandatory == 'yes'
-                                            ? " *"
-                                            : "")),
-                                  ))
-                              .toList(),
+                                    child: Text(option),
+                                  ))),
                           onChanged: (String? value) {
                             field.answer = value ?? "";
                             logic.update([field.metaInfo.label]);
@@ -274,27 +272,42 @@ class DynamicForm extends StatelessWidget {
                           ),
                         ),
                         if (field.answer.isNotEmpty)
-                          Container(
-                            margin: const EdgeInsets.symmetric(vertical: 10),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 8),
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey),
-                              borderRadius: BorderRadius.circular(10.0),
+                          GestureDetector(
+                            onTap: () => showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return ImageDialog(
+                                  imagePath: field.answer.contains("cloudinary")
+                                      ? ""
+                                      : field.answer,
+                                  imageUrl: field.answer,
+                                );
+                              },
                             ),
-                            child: InkWell(
-                              onTap: field.answer.contains("cloudinary")
-                                  ? () => launchUrl(Uri.parse(field.answer))
-                                  : null,
-                              child: Text(
-                                field.answer.split("/").last,
-                                style: field.answer.contains("cloudinary")
-                                    ? const TextStyle(
-                                        color: Colors.blue,
-                                        overflow: TextOverflow.ellipsis,
-                                        decoration: TextDecoration.underline,
-                                      )
-                                    : null,
+                            child: Container(
+                              margin: const EdgeInsets.symmetric(vertical: 10),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Colors.grey),
+                                borderRadius: BorderRadius.circular(10.0),
+                                color: Colors.blue[100],
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    field.answer.split("/").last,
+                                  ),
+                                  const Padding(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 8.0),
+                                    child: Icon(
+                                      Icons.remove_red_eye_rounded,
+                                      size: 20,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ),

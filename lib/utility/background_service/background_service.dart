@@ -15,7 +15,7 @@ class BackgroundService {
             state == AppLifecycleState.paused) &&
         controller.internetConnectivity &&
         LocalStorage.getGramPowerAnswer().isNotEmpty) {
-      await GramPowerRepo.saveGramPowerData(null);
+      // await GramPowerRepo.saveGramPowerData(null);
     }
   }
 }
